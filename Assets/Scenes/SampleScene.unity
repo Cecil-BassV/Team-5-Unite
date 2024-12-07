@@ -314,7 +314,7 @@ GameObject:
   - component: {fileID: 989375018}
   - component: {fileID: 989375017}
   - component: {fileID: 989375016}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -424,6 +424,9 @@ MonoBehaviour:
   jumpMax: 2
   jumpSpeed: 5
   gravity: 15
+  shootDamage: 0
+  shootRate: 0
+  shootDist: 0
 --- !u!4 &989375021
 Transform:
   m_ObjectHideFlags: 0

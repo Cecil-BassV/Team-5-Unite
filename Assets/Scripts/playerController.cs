@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class playerController : MonoBehaviour
 {
@@ -15,6 +16,11 @@ public class playerController : MonoBehaviour
     [SerializeField] [Range(5, 20)] int jumpSpeed;
     [SerializeField] [Range(15, 40)] int gravity;
 
+    [Header("----- Gun Stats -----")]
+    [SerializeField] int shootDamage;
+    [SerializeField] float shootRate;
+    [SerializeField] int shootDist;
+
 
     Vector3 moveDir;
     Vector3 playerVel;
@@ -22,6 +28,7 @@ public class playerController : MonoBehaviour
     int jumpCount;
 
     bool isSprinting;
+    bool isShooting;
 
     // Start is called before the first frame update
     void Start()
@@ -32,6 +39,8 @@ public class playerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward * shootDist, Color.blue);
+
         movement();
 
         sprint();
@@ -72,5 +81,23 @@ public class playerController : MonoBehaviour
             speed /= sprintMod;
             isSprinting = false;
         }
+    }
+
+    IEnumerator shoot()
+    {
+        RaycastHit hit;
+        if(Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, shootDist))
+        {
+            Debug.Log(hit.collider.name);
+
+            IDamage dmg = hit.collider.GetComponent<IDamage>();
+            if(dmg != null)
+            {
+                dmg.takedamage(shootDamage);
+            }
+        }
+
+        yield return new WaitForSeconds(shootRate);
+        isShooting = false;
     }
 }
