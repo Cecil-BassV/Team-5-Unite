@@ -4,17 +4,18 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 
-public class GameManager : MonoBehaviour
+public class gamemanager : MonoBehaviour
 {
-    public static GameManager instance;
+    public static gamemanager instance;
 
     [SerializeField] GameObject menuActive;
     [SerializeField] GameObject menuPause;
     [SerializeField] GameObject menuWin, menuLose;
     [SerializeField] TMP_Text goalCountText;
+    [SerializeField] TMP_Text playerAmmoCount;
+
     public Image playerHPBar;
     public GameObject playerDamageScreen;
-
     public GameObject player;
     public playerController playerScript;
     public bool isPaused;
@@ -48,6 +49,7 @@ public class GameManager : MonoBehaviour
                 stateUnpause();
             }
         }
+        UpdateAmmoUI(); // Continuously update ammo UI
     }
 
     public void statePause()
@@ -78,6 +80,14 @@ public class GameManager : MonoBehaviour
             statePause();
             menuActive = menuWin;
             menuActive.SetActive(true);
+        }
+    }
+
+    private void UpdateAmmoUI()
+    {
+        if (playerAmmoCount != null && playerScript != null)
+        {
+            playerAmmoCount.text = $"Ammo: {playerScript.GetCurrentAmmo()} / {playerScript.GetMaxAmmo()}";
         }
     }
 
