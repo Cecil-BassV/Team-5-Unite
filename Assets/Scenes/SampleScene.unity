@@ -420,10 +420,10 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 0
   speed: 3
-  sprintSpeed: 0
-  jumpMax: 0
-  jumpSpeed: 0
-  gravity: 0
+  sprintMod: 2
+  jumpMax: 2
+  jumpSpeed: 5
+  gravity: 15
 --- !u!4 &989375021
 Transform:
   m_ObjectHideFlags: 0

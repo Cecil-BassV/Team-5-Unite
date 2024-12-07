@@ -9,17 +9,19 @@ public class playerController : MonoBehaviour
     [SerializeField] LayerMask ignoreMask;
 
     [Header("----- Stats -----")]
-    [SerializeField] int speed;
-    [SerializeField] int sprintSpeed;
-    [SerializeField] int jumpMax;
-    [SerializeField] int jumpSpeed;
-    [SerializeField] int gravity;
+    [SerializeField] [Range(1, 5)] int speed;
+    [SerializeField] [Range(2, 5)] int sprintMod;
+    [SerializeField] [Range(1, 3)] int jumpMax;
+    [SerializeField] [Range(5, 20)] int jumpSpeed;
+    [SerializeField] [Range(15, 40)] int gravity;
 
 
     Vector3 moveDir;
     Vector3 playerVel;
 
     int jumpCount;
+
+    bool isSprinting;
 
     // Start is called before the first frame update
     void Start()
@@ -31,6 +33,8 @@ public class playerController : MonoBehaviour
     void Update()
     {
         movement();
+
+        sprint();
     }
 
     void movement()
@@ -40,7 +44,33 @@ public class playerController : MonoBehaviour
 
         controller.Move(moveDir * speed * Time.deltaTime);
 
-        controller.Move(playerVel * Time.deltaTime);
+        jump();
 
+        controller.Move(playerVel * Time.deltaTime);
+        playerVel.y -= gravity * Time.deltaTime;
+
+    }
+
+    void jump()
+    {
+        if(Input.GetButtonDown("Jump") && jumpCount < jumpMax)
+        {
+            jumpCount++;
+            playerVel.y = jumpSpeed;
+        }
+    }
+
+    void sprint()
+    {
+        if (Input.GetButtonDown("Sprint"))
+        {
+            speed *= sprintMod;
+            isSprinting = true;
+        }
+        else if (Input.GetButtonUp("Sprint"))
+        {
+            speed /= sprintMod;
+            isSprinting = false;
+        }
     }
 }
