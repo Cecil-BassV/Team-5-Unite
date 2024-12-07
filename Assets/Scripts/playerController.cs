@@ -1,37 +1,53 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class playerController : MonoBehaviour
+public class playerController : MonoBehaviour, IDamage
 {
     [Header("----- Components -----")]
     [SerializeField] CharacterController controller;
     [SerializeField] LayerMask ignoreMask;
 
     [Header("----- Stats -----")]
-    [SerializeField] [Range(1, 5)] int speed;
-    [SerializeField] [Range(2, 5)] int sprintMod;
-    [SerializeField] [Range(1, 3)] int jumpMax;
-    [SerializeField] [Range(5, 20)] int jumpSpeed;
-    [SerializeField] [Range(15, 40)] int gravity;
+    [SerializeField][Range(1, 10)] int HP;
+    [SerializeField] int speed;
+    [SerializeField] int sprintMod;
+    [SerializeField] int jumpMax;
+    [SerializeField] int jumpSpeed;
+    [SerializeField] int gravity;
 
     [Header("----- Gun Stats -----")]
     [SerializeField] int shootDamage;
-    [SerializeField] float shootRate;
     [SerializeField] int shootDist;
-
+    [SerializeField] int shootRate;
+    [SerializeField] int maxAmmo = 300; // Maximum ammo capacity
+    [SerializeField] int playerAmmoAmount; // UI element for ammo display
+    [SerializeField] float reloadTime = 2f; // Time required to reload
 
     Vector3 moveDir;
     Vector3 playerVel;
 
+    int currentAmmo;
     int jumpCount;
+    int HPOrig;
 
-    bool isSprinting;
     bool isShooting;
+    bool isSprinting;
+    bool isReloading;
+
 
     // Start is called before the first frame update
     void Start()
+    {
+        HPOrig = HP;
+        currentAmmo = maxAmmo;
+        updatePlayerUI();
+        UpdateAmmoUI();
+    }
+
+    private void UpdateAmmoUI()
     {
         
     }
@@ -39,18 +55,37 @@ public class playerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward * shootDist, Color.blue);
+        Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward * shootDist, Color.red);
 
-        movement();
+        if (!isReloading)
+        {
+            movement();
+            sprint();
 
-        sprint();
+            if (Input.GetButton("Fire1") && !isShooting && currentAmmo > 0)
+            {
+                StartCoroutine(shoot());
+            }
+            else if (Input.GetKeyDown(KeyCode.R) && currentAmmo < maxAmmo)
+            {
+                StartCoroutine(Reload());
+            }
+        }
     }
 
     void movement()
     {
-        moveDir = (transform.forward * Input.GetAxis("Vertical")) + 
-                  (transform.right * Input.GetAxis("Horizontal"));
+        if(controller.isGrounded)
+        {
+            jumpCount = 0;
+            playerVel = Vector3.zero;
+        }
 
+
+        //moveDir = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+        //transform.position += moveDir * speed * Time.deltaTime;
+
+        moveDir = transform.right * Input.GetAxis("Horizontal") + transform.forward * Input.GetAxis("Vertical");
         controller.Move(moveDir * speed * Time.deltaTime);
 
         jump();
@@ -58,6 +93,10 @@ public class playerController : MonoBehaviour
         controller.Move(playerVel * Time.deltaTime);
         playerVel.y -= gravity * Time.deltaTime;
 
+        if(Input.GetButton("Fire1") && !isShooting)
+        {
+            StartCoroutine(shoot());
+        }
     }
 
     void jump()
@@ -71,7 +110,7 @@ public class playerController : MonoBehaviour
 
     void sprint()
     {
-        if (Input.GetButtonDown("Sprint"))
+        if(Input.GetButtonDown("Sprint"))
         {
             speed *= sprintMod;
             isSprinting = true;
@@ -85,19 +124,82 @@ public class playerController : MonoBehaviour
 
     IEnumerator shoot()
     {
-        RaycastHit hit;
-        if(Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, shootDist))
+        if (currentAmmo > 0) // Ensure there is ammo to shoot
         {
-            Debug.Log(hit.collider.name);
+            isShooting = true;
 
-            IDamage dmg = hit.collider.GetComponent<IDamage>();
-            if(dmg != null)
+            RaycastHit hit;
+            if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, shootDist))
             {
-                dmg.takedamage(shootDamage);
-            }
-        }
+                Debug.Log(hit.collider.name);
 
-        yield return new WaitForSeconds(shootRate);
-        isShooting = false;
+                IDamage dmg = hit.collider.GetComponent<IDamage>();
+                if (dmg != null)
+                {
+                    dmg.takeDamage(shootDamage);
+                }
+            }
+
+            currentAmmo--; // Deduct ammo
+            UpdateAmmoUI(); // Update the UI to reflect new ammo count
+
+            yield return new WaitForSeconds(shootRate);
+            isShooting = false;
+        }
+        else
+        {
+            Debug.Log("Out of Ammo!");
+        }
+    }
+
+    IEnumerator Reload()
+    {
+        isReloading = true;
+        Debug.Log("Reloading...");
+
+        yield return new WaitForSeconds(reloadTime);
+
+        currentAmmo = maxAmmo;
+        UpdateAmmoUI();
+        isReloading = false;
+
+        Debug.Log("Reloaded!");
+    }
+
+
+    public void takeDamage(int amount)
+    {
+        HP -= amount;
+        updatePlayerUI();
+        StartCoroutine(flashScreenDamage());
+
+        if(HP <= 0)
+        {
+            //Hey I'm dead!
+            gamemanager.instance.youLose();
+        }
+    }
+
+    IEnumerator flashScreenDamage()
+    {
+        gamemanager.instance.playerDamageScreen.SetActive(true);
+        yield return new WaitForSeconds(0.1f);
+        gamemanager.instance.playerDamageScreen.SetActive(false);
+
+    }
+
+    public void updatePlayerUI()
+    {
+        gamemanager.instance.playerHPBar.fillAmount = (float)HP / HPOrig;
+    }
+
+    public int GetCurrentAmmo()
+    {
+        return currentAmmo;
+    }
+
+    public int GetMaxAmmo()
+    {
+        return maxAmmo;
     }
 }
