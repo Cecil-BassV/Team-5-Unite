@@ -1868,14 +1868,18 @@ MonoBehaviour:
   ignoreMask:
     serializedVersion: 2
     m_Bits: 0
+  HP: 5
   speed: 3
   sprintMod: 2
   jumpMax: 2
   jumpSpeed: 5
   gravity: 15
   shootDamage: 0
-  shootRate: 0
   shootDist: 0
+  shootRate: 0
+  maxAmmo: 300
+  playerAmmoAmount: 0
+  reloadTime: 2
 --- !u!4 &989375021
 Transform:
   m_ObjectHideFlags: 0
@@ -3012,6 +3016,7 @@ MonoBehaviour:
   menuWin: {fileID: 178675611}
   menuLose: {fileID: 5902853805399778132}
   goalCountText: {fileID: 1810492303}
+  playerAmmoCount: {fileID: 0}
   playerHPBar: {fileID: 468164248}
   playerDamageScreen: {fileID: 351863326}
   player: {fileID: 0}

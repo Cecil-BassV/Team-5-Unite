@@ -4,9 +4,9 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 
-public class gamemanager : MonoBehaviour
+public class GameManager : MonoBehaviour
 {
-    public static gamemanager instance;
+    public static GameManager instance;
 
     [SerializeField] GameObject menuActive;
     [SerializeField] GameObject menuPause;
@@ -49,7 +49,7 @@ public class gamemanager : MonoBehaviour
                 stateUnpause();
             }
         }
-        UpdateAmmoUI(); // Continuously update ammo UI
+        //Causes null reference error as of now since we do not have ammo UI yet. UpdateAmmoUI(); // Continuously update ammo UI
     }
 
     public void statePause()

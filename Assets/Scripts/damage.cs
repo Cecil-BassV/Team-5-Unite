@@ -21,7 +21,7 @@ public class damage : MonoBehaviour
 
         if(dmg != null)
         {
-            dmg.takedamage(damageAmount);
+            dmg.takeDamage(damageAmount);
         }
     }
 

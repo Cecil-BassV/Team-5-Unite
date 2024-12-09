@@ -176,21 +176,21 @@ public class playerController : MonoBehaviour, IDamage
         if(HP <= 0)
         {
             //Hey I'm dead!
-            gamemanager.instance.youLose();
+            GameManager.instance.youLose();
         }
     }
 
     IEnumerator flashScreenDamage()
     {
-        gamemanager.instance.playerDamageScreen.SetActive(true);
+        GameManager.instance.playerDamageScreen.SetActive(true);
         yield return new WaitForSeconds(0.1f);
-        gamemanager.instance.playerDamageScreen.SetActive(false);
+        GameManager.instance.playerDamageScreen.SetActive(false);
 
     }
 
     public void updatePlayerUI()
     {
-        gamemanager.instance.playerHPBar.fillAmount = (float)HP / HPOrig;
+        GameManager.instance.playerHPBar.fillAmount = (float)HP / HPOrig;
     }
 
     public int GetCurrentAmmo()
