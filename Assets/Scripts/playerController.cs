@@ -21,35 +21,30 @@ public class playerController : MonoBehaviour, IDamage
     [Header("----- Gun Stats -----")]
     [SerializeField] int shootDamage;
     [SerializeField] int shootDist;
-    [SerializeField] int shootRate;
-    [SerializeField] int maxAmmo = 300; // Maximum ammo capacity
+    [SerializeField] float shootRate;
+    [SerializeField] int maxAmmo; // Maximum ammo capacity
     [SerializeField] int playerAmmoAmount; // UI element for ammo display
     [SerializeField] float reloadTime = 2f; // Time required to reload
 
     Vector3 moveDir;
     Vector3 playerVel;
 
-    int currentAmmo;
     int jumpCount;
     int HPOrig;
+
+    int goalCount;
 
     bool isShooting;
     bool isSprinting;
     bool isReloading;
 
-
     // Start is called before the first frame update
     void Start()
     {
         HPOrig = HP;
-        currentAmmo = maxAmmo;
+        playerAmmoAmount = maxAmmo;
         updatePlayerUI();
-        UpdateAmmoUI();
-    }
-
-    private void UpdateAmmoUI()
-    {
-        
+        updateAmmoUI();
     }
 
     // Update is called once per frame
@@ -57,20 +52,8 @@ public class playerController : MonoBehaviour, IDamage
     {
         Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward * shootDist, Color.red);
 
-        if (!isReloading)
-        {
-            movement();
-            sprint();
-
-            if (Input.GetButton("Fire1") && !isShooting && currentAmmo > 0)
-            {
-                StartCoroutine(shoot());
-            }
-            else if (Input.GetKeyDown(KeyCode.R) && currentAmmo < maxAmmo)
-            {
-                StartCoroutine(Reload());
-            }
-        }
+        movement();
+        sprint();
     }
 
     void movement()
@@ -93,9 +76,14 @@ public class playerController : MonoBehaviour, IDamage
         controller.Move(playerVel * Time.deltaTime);
         playerVel.y -= gravity * Time.deltaTime;
 
-        if(Input.GetButton("Fire1") && !isShooting)
+        if(Input.GetButton("Fire1") && !isShooting && playerAmmoAmount > 0 && !isReloading)
         {
             StartCoroutine(shoot());
+        }
+
+        if((Input.GetKeyDown(KeyCode.R)))
+        {
+            StartCoroutine(Reload());
         }
     }
 
@@ -124,13 +112,11 @@ public class playerController : MonoBehaviour, IDamage
 
     IEnumerator shoot()
     {
-        if (currentAmmo > 0) // Ensure there is ammo to shoot
-        {
-            isShooting = true;
+         isShooting = true;
 
-            RaycastHit hit;
-            if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, shootDist))
-            {
+         RaycastHit hit;
+         if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, shootDist, ~ignoreMask))
+         {
                 Debug.Log(hit.collider.name);
 
                 IDamage dmg = hit.collider.GetComponent<IDamage>();
@@ -138,18 +124,14 @@ public class playerController : MonoBehaviour, IDamage
                 {
                     dmg.takeDamage(shootDamage);
                 }
-            }
+         }
 
-            currentAmmo--; // Deduct ammo
-            UpdateAmmoUI(); // Update the UI to reflect new ammo count
+         playerAmmoAmount--;
+         updateAmmoUI();
 
-            yield return new WaitForSeconds(shootRate);
-            isShooting = false;
-        }
-        else
-        {
-            Debug.Log("Out of Ammo!");
-        }
+         yield return new WaitForSeconds(shootRate);
+
+         isShooting = false;
     }
 
     IEnumerator Reload()
@@ -159,8 +141,8 @@ public class playerController : MonoBehaviour, IDamage
 
         yield return new WaitForSeconds(reloadTime);
 
-        currentAmmo = maxAmmo;
-        UpdateAmmoUI();
+        playerAmmoAmount = maxAmmo;
+        updateAmmoUI();
         isReloading = false;
 
         Debug.Log("Reloaded!");
@@ -193,9 +175,14 @@ public class playerController : MonoBehaviour, IDamage
         GameManager.instance.playerHPBar.fillAmount = (float)HP / HPOrig;
     }
 
+    public void updateAmmoUI()
+    {
+        GameManager.instance.updatePlayerAmmoUI(playerAmmoAmount, maxAmmo);
+    }
+
     public int GetCurrentAmmo()
     {
-        return currentAmmo;
+        return playerAmmoAmount;
     }
 
     public int GetMaxAmmo()

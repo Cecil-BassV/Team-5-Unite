@@ -83,12 +83,13 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void UpdateAmmoUI()
+    public void updatePlayerAmmoUI(int currAmmo, int maxAmmmo)
     {
-        if (playerAmmoCount != null && playerScript != null)
+        if(playerScript != null)
         {
-            playerAmmoCount.text = $"Ammo: {playerScript.GetCurrentAmmo()} / {playerScript.GetMaxAmmo()}";
+            playerAmmoCount.text = currAmmo.ToString("F0") + " / " + maxAmmmo.ToString("F0");
         }
+
     }
 
     public void youLose()
