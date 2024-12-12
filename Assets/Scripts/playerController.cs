@@ -81,7 +81,7 @@ public class playerController : MonoBehaviour, IDamage
             StartCoroutine(shoot());
         }
 
-        if((Input.GetKeyDown(KeyCode.R)))
+        if((Input.GetKeyDown(KeyCode.R)) && playerAmmoAmount < maxAmmo)
         {
             StartCoroutine(Reload());
         }
