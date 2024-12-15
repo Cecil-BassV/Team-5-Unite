@@ -1,11 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class enemyAI : MonoBehaviour, IDamage
 {
     [SerializeField] Renderer model;
+    [SerializeField] NavMeshAgent agent;
     [SerializeField] int HP;
+
+    bool playerInRange;
 
     Color colorOrig;
 
@@ -24,12 +28,19 @@ public class enemyAI : MonoBehaviour, IDamage
 
     private void OnTriggerEnter(Collider other)
     {
-
+        if (other.CompareTag("Player"))
+        {
+            playerInRange = true;
+        }
     }
 
     private void OnTriggerExit(Collider other)
     {
-
+        if (other.CompareTag("Player"))
+        {
+            playerInRange = false;
+            agent.stoppingDistance = 0;
+        }
     }
 
     public void takeDamage(int amount)
