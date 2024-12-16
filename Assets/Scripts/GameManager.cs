@@ -11,14 +11,25 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameObject menuActive;
     [SerializeField] GameObject menuPause;
     [SerializeField] GameObject menuWin, menuLose;
+    [SerializeField] GameObject reloadInd;
     [SerializeField] TMP_Text goalCountText;
     [SerializeField] TMP_Text playerAmmoCount;
+    [SerializeField] TMP_Text roundNumberText;
+    [SerializeField] TMP_Text pointsText;
+    [SerializeField] GameObject spawnObj;
+
+    [Header("----- Game Settings -----")]
+    [SerializeField] int roundNumber;
+    [SerializeField] int roundMultiplier;
+    public int playerPoints;
 
     public Image playerHPBar;
     public GameObject playerDamageScreen;
     public GameObject player;
     public playerController playerScript;
     public bool isPaused;
+    public bool hasReloadPrompt = false;
+
 
     float timeScaleOrig;
 
@@ -28,6 +39,8 @@ public class GameManager : MonoBehaviour
     void Awake()
     {
         instance = this;
+        updateRoundCount();
+        updatePlayerPoints(0);
         timeScaleOrig = Time.timeScale;
         player = GameObject.FindWithTag("Player");
         playerScript = player.GetComponent<playerController>();
@@ -38,6 +51,9 @@ public class GameManager : MonoBehaviour
     {
         if (Input.GetButtonDown("Cancel"))
         {
+            if (menuActive == reloadInd)
+                reloadPrompt(false);
+
             if (menuActive == null)
             {
                 statePause();
@@ -47,9 +63,16 @@ public class GameManager : MonoBehaviour
             else if (menuActive == menuPause)
             {
                 stateUnpause();
+
+                if (hasReloadPrompt == true)
+                {
+                    reloadPrompt(true);
+                }
             }
+
+
         }
-        //Causes null reference error as of now since we do not have ammo UI yet. UpdateAmmoUI(); // Continuously update ammo UI
+
     }
 
     public void statePause()
@@ -70,6 +93,18 @@ public class GameManager : MonoBehaviour
         menuActive = null;
     }
 
+    public void spawnObject(Vector3 pos)
+    {
+        if (spawnObj != null)
+        {
+            Instantiate(spawnObj, pos, Quaternion.identity);
+        }
+        else
+        {
+            // Error
+        }
+    }
+
     public void updateGameGoal(int amount)
     {
         goalCount += amount;
@@ -77,10 +112,21 @@ public class GameManager : MonoBehaviour
 
         if (goalCount <= 0)
         {
-            statePause();
-            menuActive = menuWin;
-            menuActive.SetActive(true);
+            //statePause();
+            //menuActive = menuWin;
+            //menuActive.SetActive(true);
+            //roundNumber++;
+            updateRoundCount();
+            spawnObject(new Vector3(-24, 2, 18)); // Temp
+            
         }
+    }
+
+    public void updateRoundCount()
+    {
+        roundNumber++;
+        roundNumberText.text = roundNumber.ToString("F0");
+        
     }
 
     public void updatePlayerAmmoUI(int currAmmo, int maxAmmmo)
@@ -90,6 +136,24 @@ public class GameManager : MonoBehaviour
             playerAmmoCount.text = currAmmo.ToString("F0") + " / " + maxAmmmo.ToString("F0");
         }
 
+    }
+
+    public void updatePlayerPoints(int amount)
+    {
+        playerPoints += amount;
+        pointsText.text = playerPoints.ToString("F0");
+    }
+
+    public void reloadPrompt(bool toggle)
+    {
+        menuActive = reloadInd;
+        menuActive.SetActive(toggle);
+
+        if (toggle != true)
+        {
+            menuActive = null;
+        }
+        
     }
 
     public void youLose()

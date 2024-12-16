@@ -38,7 +38,6 @@ public class playerController : MonoBehaviour, IDamage
     bool isSprinting;
     bool isReloading;
 
-    // Start is called before the first frame update
     void Start()
     {
         HPOrig = HP;
@@ -47,12 +46,16 @@ public class playerController : MonoBehaviour, IDamage
         updateAmmoUI();
     }
 
-    // Update is called once per frame
     void Update()
     {
         Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward * shootDist, Color.red);
 
-        movement();
+        if(!GameManager.instance.isPaused)
+        {
+            movement();
+            // Select gun will go here.
+        }
+
         sprint();
     }
 
@@ -139,10 +142,14 @@ public class playerController : MonoBehaviour, IDamage
         isReloading = true;
         Debug.Log("Reloading...");
 
-        yield return new WaitForSeconds(reloadTime);
+        GameManager.instance.reloadPrompt(false);
+        GameManager.instance.hasReloadPrompt = false;
 
+        yield return new WaitForSeconds(reloadTime);
         playerAmmoAmount = maxAmmo;
+
         updateAmmoUI();
+
         isReloading = false;
 
         Debug.Log("Reloaded!");
@@ -178,6 +185,12 @@ public class playerController : MonoBehaviour, IDamage
     public void updateAmmoUI()
     {
         GameManager.instance.updatePlayerAmmoUI(playerAmmoAmount, maxAmmo);
+
+        if (playerAmmoAmount == 0)
+        {
+            GameManager.instance.reloadPrompt(true);
+            GameManager.instance.hasReloadPrompt = true;
+        }
     }
 
     public int GetCurrentAmmo()
