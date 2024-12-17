@@ -719,6 +719,7 @@ MonoBehaviour:
   headPos: {fileID: 8472382904416701749}
   faceTargetSpeed: 100
   FOV: 120
+  damage: 1
   attackCooldown: 1
   attackRange: 2.1
 --- !u!135 &2375180045408048939
