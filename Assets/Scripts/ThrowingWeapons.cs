@@ -4,15 +4,18 @@ using UnityEngine;
 
 public class ThrowingWeapons : MonoBehaviour
 {
+    [Header("----- Components -----")]
     [SerializeField] Transform Camera;
     [SerializeField] Transform attackPos;
     [SerializeField] GameObject objectToThrow;
 
+    [Header("----- Stats -----")]
     [SerializeField] int knifeDamage;
     [SerializeField] int knifeDist;
     [SerializeField] int throwMax;
     [SerializeField] float throwCooldown;
 
+    [Header("----- Throwing -----")]
     public KeyCode throwKey = KeyCode.Q;
     [SerializeField] float throwForce;
     [SerializeField] float throwUpwardForce;
