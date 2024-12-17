@@ -12,6 +12,7 @@ public class enemyAI : MonoBehaviour, IDamage
     [SerializeField] Transform headPos;
     [SerializeField] int faceTargetSpeed;
     [SerializeField] int FOV;
+    [SerializeField] int damage;
 
     [SerializeField] float attackCooldown;
     [SerializeField] float attackRange;
@@ -84,7 +85,7 @@ public class enemyAI : MonoBehaviour, IDamage
         isMauling = true;
         // AttackAnimation
         // Attack Player
-        GameManager.instance.playerScript.takeDamage(1);
+        GameManager.instance.playerScript.takeDamage(damage);
         Debug.Log("ATTACK!!!!");
         
         yield return new WaitForSeconds(attackCooldown);

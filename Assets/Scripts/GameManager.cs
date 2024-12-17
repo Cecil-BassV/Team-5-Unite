@@ -33,13 +33,12 @@ public class GameManager : MonoBehaviour
 
     float timeScaleOrig;
 
-    int goalCount;
+    public int goalCount;
 
     // Start is called before the first frame update
     void Awake()
     {
         instance = this;
-        updateRoundCount();
         updatePlayerPoints(0);
         timeScaleOrig = Time.timeScale;
         player = GameObject.FindWithTag("Player");
@@ -93,11 +92,11 @@ public class GameManager : MonoBehaviour
         menuActive = null;
     }
 
-    public void spawnObject(Vector3 pos)
+    public void spawnObject(GameObject spawnObject, Vector3 pos)
     {
-        if (spawnObj != null)
+        if (spawnObject != null)
         {
-            Instantiate(spawnObj, pos, Quaternion.identity);
+            Instantiate(spawnObject, pos, Quaternion.identity);
         }
         else
         {
@@ -110,16 +109,16 @@ public class GameManager : MonoBehaviour
         goalCount += amount;
         goalCountText.text = goalCount.ToString("F0");
 
-        if (goalCount <= 0)
-        {
+        //if (goalCount <= 0)
+        //{
             //statePause();
             //menuActive = menuWin;
             //menuActive.SetActive(true);
             //roundNumber++;
-            updateRoundCount();
-            spawnObject(new Vector3(-24, 2, 18)); // Temp
+            //updateRoundCount();
+            //spawnObject(new Vector3(-24, 2, 18)); // Temp
             
-        }
+        //}
     }
 
     public void updateRoundCount()
