@@ -5,6 +5,7 @@ using UnityEngine;
 public class ThrowingWeapons : MonoBehaviour
 {
     [Header("----- Components -----")]
+    [SerializeField] LayerMask ignoreMask;
     [SerializeField] Transform Camera;
     [SerializeField] Transform attackPos;
     [SerializeField] GameObject objectToThrow;
@@ -31,7 +32,7 @@ public class ThrowingWeapons : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetKeyDown(KeyCode.Q))
+        if(Input.GetKeyDown(KeyCode.Q) && readyToThrow && throwMax > 0)
         {
             Throw();
         }
@@ -44,13 +45,29 @@ public class ThrowingWeapons : MonoBehaviour
 
             Rigidbody projectileRb = projectile.GetComponent<Rigidbody>();
 
+            if(projectileRb == null)
+            {
+                Debug.LogError("Projectile prefab doesn't have a Rigidbody component!");
+                return;
+            }
+         
             Vector3 forceDirection = Camera.transform.forward;
 
             RaycastHit hit;
 
-            if(Physics.Raycast(Camera.position, Camera.forward, out hit, 500f))
+            if (Physics.Raycast(Camera.position, Camera.forward, out hit, 500f, ~ignoreMask))
             {
                 forceDirection = (hit.point - attackPos.position).normalized;
+            }
+
+            IDamage dmg = hit.collider.GetComponent<IDamage>();
+            if (dmg != null)
+            {              
+                    dmg.takeDamage(knifeDamage);                    
+            }
+            else
+            {
+                Debug.Log($"Object {hit.collider.gameObject.name} does not implement IDamage");
             }
 
             Vector3 forceAdd = forceDirection * throwForce + transform.up * throwUpwardForce;
