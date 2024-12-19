@@ -8,13 +8,11 @@ public class enemyAI : MonoBehaviour, IDamage
     [SerializeField] Renderer model;
     [SerializeField] NavMeshAgent agent;
     [SerializeField] int HP;
-    
 
     [SerializeField] Transform headPos;
     [SerializeField] int faceTargetSpeed;
     [SerializeField] int FOV;
     [SerializeField] int damage;
-  
 
     [SerializeField] float attackCooldown;
     [SerializeField] float attackRange;
