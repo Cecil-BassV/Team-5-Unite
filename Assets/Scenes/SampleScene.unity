@@ -4403,10 +4403,17 @@ MonoBehaviour:
   Camera: {fileID: 963194228}
   attackPos: {fileID: 415041872}
   objectToThrow: {fileID: 458543772267655552, guid: 32bf94bee0616e14ea7fc0cca0aaf310, type: 3}
+<<<<<<< Updated upstream
   knifeDamage: 0
   knifeDist: 0
   throwMax: 3
   throwCooldown: 3
+=======
+  knifeDamage: 3
+  knifeDist: 50
+  throwMax: 100
+  throwCooldown: 0.1
+>>>>>>> Stashed changes
   throwKey: 113
   throwForce: 120
   throwUpwardForce: 0
@@ -5186,7 +5193,7 @@ GameObject:
   - component: {fileID: 1191941023}
   m_Layer: 0
   m_Name: Spawn Point
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

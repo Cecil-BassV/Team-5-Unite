@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ThrowingWeapons : MonoBehaviour
+public class ThrowingWeapons : MonoBehaviour, IDamage
 {
     [Header("----- Components -----")]
     [SerializeField] LayerMask ignoreMask;
@@ -41,47 +41,58 @@ public class ThrowingWeapons : MonoBehaviour
         {
             readyToThrow = false;
 
-            GameObject projectile = Instantiate(objectToThrow, attackPos.position, Camera.rotation);
+            GameObject projectile = Instantiate(objectToThrow, attackPos.position, Camera.rotation); // Instantiates the projectile
 
-            Rigidbody projectileRb = projectile.GetComponent<Rigidbody>();
-
-            if(projectileRb == null)
+            if(projectile != null)
             {
-                Debug.LogError("Projectile prefab doesn't have a Rigidbody component!");
-                return;
+                Debug.Log("Projectile instantiated successfully.");
+
+                Destroy(projectile, 1f);  // Destroys gameObject after 1 second if there is no hit
+            }                             // Adjust the delay as you see fit
+            else
+            {
+                Debug.LogError("Projectile instantiation failed!");
             }
-         
-            Vector3 forceDirection = Camera.transform.forward;
 
-            RaycastHit hit;
+            Rigidbody projectileRb = projectile.GetComponent<Rigidbody>(); // Gets the rigidbody component of the object
 
+            Vector3 forceDirection = Camera.transform.forward;         
+                             
+
+            RaycastHit hit; // Checks for raycast hit
             if (Physics.Raycast(Camera.position, Camera.forward, out hit, 500f, ~ignoreMask))
             {
                 forceDirection = (hit.point - attackPos.position).normalized;
-            }
 
-            IDamage dmg = hit.collider.GetComponent<IDamage>();
-            if (dmg != null)
-            {              
-                    dmg.takeDamage(knifeDamage);                    
-            }
-            else
-            {
-                Debug.Log($"Object {hit.collider.gameObject.name} does not implement IDamage");
-            }
+                if (hit.collider.CompareTag("Enemy")) // Checks if object is hit by an enemy tag
+                {
+                    IDamage dmg = hit.collider.GetComponent<IDamage>(); // Interacts with the IDamage interface
+                    if (dmg != null)
+                    {
+                        dmg.takeDamage(knifeDamage);
+                    }
 
+                    Destroy(hit.collider.gameObject); // Destroys gameObject
+                }              
+            }
+           
+         
             Vector3 forceAdd = forceDirection * throwForce + transform.up * throwUpwardForce;
-
             projectileRb.AddForce(forceAdd, ForceMode.Impulse);
 
             throwMax--;
 
-            Invoke(nameof(ResetThrow), throwCooldown);
+            Invoke(nameof(ResetThrow), throwCooldown); // Resets throw after cooldown
         }
     }
 
     void ResetThrow()
     {
         readyToThrow = true;
+    }
+
+    public void takeDamage(int amount)
+    {
+        throw new System.NotImplementedException();
     }
 }
