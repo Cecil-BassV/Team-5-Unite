@@ -1,0 +1,24 @@
+using UnityEngine;
+
+public class Shop : MonoBehaviour
+{
+    public int playerPoints = 0;
+
+    public void BuyHealthUpgrade()
+    {
+        if (playerPoints >= 50)
+        {
+            Debug.Log("Health Upgraded!");
+            playerPoints -= 50;
+        }
+    }
+
+    public void BuySpeedUpgrade()
+    {
+        if (playerPoints >= 50)
+        {
+            Debug.Log("Speed Upgraded!");
+            playerPoints -= 50;
+        }
+    }
+}
