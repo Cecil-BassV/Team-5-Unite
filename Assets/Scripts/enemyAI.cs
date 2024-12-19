@@ -7,8 +7,6 @@ public class enemyAI : MonoBehaviour, IDamage
 {
     [SerializeField] Renderer model;
     [SerializeField] NavMeshAgent agent;
-    [SerializeField] Animator anim;
-    [SerializeField] int animSpeedTrans;
     [SerializeField] int HP;
 
     [SerializeField] Transform headPos;
@@ -36,11 +34,6 @@ public class enemyAI : MonoBehaviour, IDamage
     // Update is called once per frame
     void Update()
     {
-        float agentSpeed = agent.velocity.normalized.magnitude;
-        float animSpeed = anim.GetFloat("Speed");
-
-        anim.SetFloat("Speed", Mathf.MoveTowards(animSpeed, agentSpeed, Time.deltaTime * animSpeedTrans));
-
         if (playerInRange && canSeePlayer())
         {
 
@@ -86,7 +79,6 @@ public class enemyAI : MonoBehaviour, IDamage
     {
         isMauling = true;
         // AttackAnimation
-        anim.SetTrigger("Attack1");
         // Attack Player
         GameManager.instance.playerScript.takeDamage(damage);
         Debug.Log("ATTACK!!!!");
@@ -121,7 +113,6 @@ public class enemyAI : MonoBehaviour, IDamage
     public void takeDamage(int amount)
     {
         HP -= amount;
-        agent.SetDestination(GameManager.instance.player.transform.position);
         StartCoroutine(flashRed());
 
         if (HP <= 0)
