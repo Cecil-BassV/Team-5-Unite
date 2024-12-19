@@ -1,0 +1,30 @@
+using UnityEngine;
+
+public class PowerUp : MonoBehaviour
+{
+    public enum PowerUpType { Health, Speed, Damage }
+    public PowerUpType powerUpType;
+
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            switch (powerUpType)
+            {
+                case PowerUpType.Health:
+                    // Increase player's health
+                    Debug.Log("Health Restored!");
+                    break;
+                case PowerUpType.Speed:
+                    // Temporarily increase player speed
+                    Debug.Log("Speed Boost!");
+                    break;
+                case PowerUpType.Damage:
+                    // Temporarily increase weapon damage
+                    Debug.Log("Damage Boost!");
+                    break;
+            }
+            Destroy(gameObject);
+        }
+    }
+}
