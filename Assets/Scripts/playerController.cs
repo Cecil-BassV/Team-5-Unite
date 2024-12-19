@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityRandom = UnityEngine.Random;
 
 public class playerController : MonoBehaviour, IDamage
 {
@@ -26,7 +27,7 @@ public class playerController : MonoBehaviour, IDamage
     [SerializeField] int maxAmmo; // Maximum ammo capacity
     [SerializeField] int playerAmmoAmount; // UI element for ammo display
     [SerializeField] float reloadTime = 2f; // Time required to reload
-
+ 
     Vector3 moveDir;
     Vector3 playerVel;
 
@@ -118,7 +119,9 @@ public class playerController : MonoBehaviour, IDamage
     {
          isShooting = true;
 
-         RaycastHit hit;
+       
+ 
+        RaycastHit hit;
          if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, shootDist, ~ignoreMask))
          {
                 Debug.Log(hit.collider.name);
