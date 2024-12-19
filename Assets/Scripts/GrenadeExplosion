@@ -1,0 +1,29 @@
+using UnityEngine;
+
+public class Grenade : MonoBehaviour
+{
+    public float explosionRadius = 5f;
+    public int damage = 50;
+
+    void Explode()
+    {
+        Collider[] colliders = Physics.OverlapSphere(transform.position, explosionRadius);
+        foreach (Collider collider in colliders)
+        {
+            if (collider.CompareTag("Zombie"))
+            {
+                ZombieAI enemyAI = collider.GetComponent<ZombieAI>();
+                if (enemyAI != null)
+                {
+                    enemyAI.TakeDamage(damage);
+                }
+            }
+        }
+        Destroy(gameObject);
+    }
+
+    void OnCollisionEnter(Collision collision)
+    {
+        Explode();
+    }
+}
