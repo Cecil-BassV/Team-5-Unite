@@ -19,6 +19,7 @@ public class playerController : MonoBehaviour, IDamage
     [SerializeField] int gravity;
 
     [Header("----- Gun Stats -----")]
+    [SerializeField] GameObject gunModel;
     [SerializeField] int shootDamage;
     [SerializeField] int shootDist;
     [SerializeField] float shootRate;
@@ -201,5 +202,15 @@ public class playerController : MonoBehaviour, IDamage
     public int GetMaxAmmo()
     {
         return maxAmmo;
+    }
+
+    public void getGunStats(gunStats gun)
+    {
+        shootDamage = gun.shootDamage;
+        shootDist = gun.shootDist;
+        shootRate = gun.shootRate;
+
+        gunModel.GetComponent<MeshFilter>().sharedMesh = gun.model.GetComponent<MeshFilter>().sharedMesh;
+        gunModel.GetComponent<MeshRenderer>().sharedMaterial = gun.model.GetComponent<MeshRenderer>().sharedMaterial;
     }
 }
