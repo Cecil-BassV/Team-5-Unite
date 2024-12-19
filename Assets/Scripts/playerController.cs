@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityRandom = UnityEngine.Random;
 
-public class playerController : MonoBehaviour, IDamage
+public class playerController : MonoBehaviour, IDamage, IOpen
 {
     [Header("----- Components -----")]
     [SerializeField] CharacterController controller;
