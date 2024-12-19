@@ -47,37 +47,32 @@ public class enemyAI : MonoBehaviour, IDamage
 
         Debug.DrawRay(headPos.position, playerDir);
 
-        RaycastHit hit;
+        //RaycastHit hit;
 
-        if (Physics.Raycast(headPos.position, playerDir, out hit))
-        {
-            if (hit.collider.CompareTag("Player") && angleToPlayer < FOV)
-            {
-                agent.SetDestination(GameManager.instance.player.transform.position);
+        //if (Physics.Raycast(headPos.position, playerDir, out hit))
+        //{
+            //if (hit.collider.CompareTag("Player") && angleToPlayer < FOV)
+            //{
+       agent.SetDestination(GameManager.instance.player.transform.position);
 
-                if (agent.remainingDistance < agent.stoppingDistance)
-                {
-                    faceTarget();
-                }
+       if (agent.remainingDistance < agent.stoppingDistance)
+       {
+           faceTarget();
+       }
 
-                if(playerDir.magnitude <= attackRange)
-                {
-                    Debug.Log("In Range!");
+       if(playerDir.magnitude <= attackRange)
+       {
+             Debug.Log("In Range!");
 
-                    if (!isMauling)
-                    {
-                        StartCoroutine(maul());
-                    }
+             if (!isMauling)
+             {
+                 StartCoroutine(maul());
+             }
 
-                }
-                
-                return true;
-            }
+       }
 
-        }
 
-        return false;
-
+        return true;
     }
 
     IEnumerator maul()

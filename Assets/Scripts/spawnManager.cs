@@ -6,11 +6,17 @@ public class spawnManager : MonoBehaviour
 {
     [SerializeField] GameObject basicZombie;
     [SerializeField] GameObject tankZombie;
+    [SerializeField] int tankRound;
+    [SerializeField] float tankZombieChance;
     [SerializeField] int startSpawnCount;
     [SerializeField] int maxSpawnCount;
     [SerializeField] float spawnInterval;
     [SerializeField] int waveIncrease;
     [SerializeField] float roundDelay;
+
+    //int tankRound = 5;
+    int spitterRound = 10;
+    //float tankZombieChance = 0.25f;
 
     bool gameStarted = true;
 
@@ -23,7 +29,7 @@ public class spawnManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     IEnumerator spawnWave()
@@ -37,12 +43,20 @@ public class spawnManager : MonoBehaviour
                 int randomX = Random.Range(-5, 10);
                 int randomZ = Random.Range(-5, 10);
                 Vector3 randomPos = new Vector3(randomX, 0, randomZ);
-                
+
+                GameObject zombieToSpawn;
+
+                if (GameManager.instance.roundNumber % tankRound == 0)
+                    zombieToSpawn = Random.value < tankZombieChance ? tankZombie : basicZombie;
+                else
+                    zombieToSpawn = basicZombie;
+
                 GameManager.instance.spawnObject(basicZombie, (transform.position + randomPos)); // Do this so they dont stack up on each other
+
                 yield return new WaitForSeconds(spawnInterval);
             }
 
-            while(GameManager.instance.goalCount > 0)
+            while (GameManager.instance.goalCount > 0)
             {
                 yield return null;
             }

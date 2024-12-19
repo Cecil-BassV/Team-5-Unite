@@ -18,9 +18,9 @@ public class GameManager : MonoBehaviour
     [SerializeField] TMP_Text pointsText;
     [SerializeField] GameObject spawnObj;
 
-    [Header("----- Game Settings -----")]
-    [SerializeField] int roundNumber;
-    [SerializeField] int roundMultiplier;
+    //[Header("----- Game Settings -----")]
+    public int roundNumber = 0;
+
     public int playerPoints;
 
     public Image playerHPBar;

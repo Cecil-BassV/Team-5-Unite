@@ -1771,7 +1771,7 @@ MonoBehaviour:
   HP: 25
   headPos: {fileID: 975811629427301579}
   faceTargetSpeed: 100
-  FOV: 120
+  FOV: 360
   damage: 5
   attackCooldown: 2.5
   attackRange: 2
@@ -1786,7 +1786,7 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 15
+  m_Radius: 360
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!136 &8693156759416651130
 CapsuleCollider:
