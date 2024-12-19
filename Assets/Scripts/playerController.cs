@@ -27,7 +27,16 @@ public class playerController : MonoBehaviour, IDamage, IOpen
     [SerializeField] int maxAmmo; // Maximum ammo capacity
     [SerializeField] int playerAmmoAmount; // UI element for ammo display
     [SerializeField] float reloadTime = 2f; // Time required to reload
- 
+
+    [Header("----- Player Sounds -----")]
+    [SerializeField] AudioSource aud;
+    [SerializeField] AudioClip[] audJump;
+    [SerializeField] [Range(0, 1)] float audJumpVol;
+    [SerializeField] AudioClip[] audDamage;
+    [SerializeField] [Range(0, 1)] float audDamageVol;
+    [SerializeField] AudioClip[] audSteps;
+    [SerializeField] [Range(0, 1)] float audStepsVol;
+
     Vector3 moveDir;
     Vector3 playerVel;
 
@@ -39,6 +48,7 @@ public class playerController : MonoBehaviour, IDamage, IOpen
     bool isShooting;
     bool isSprinting;
     bool isReloading;
+    bool isPlayingStep;
 
     void Start()
     {
@@ -65,6 +75,10 @@ public class playerController : MonoBehaviour, IDamage, IOpen
     {
         if(controller.isGrounded)
         {
+            if (moveDir.magnitude > 0.3f && !isPlayingStep)
+            {
+                StartCoroutine(playStep());
+            }
             jumpCount = 0;
             playerVel = Vector3.zero;
         }
@@ -98,6 +112,7 @@ public class playerController : MonoBehaviour, IDamage, IOpen
         {
             jumpCount++;
             playerVel.y = jumpSpeed;
+            aud.PlayOneShot(audJump[UnityEngine.Random.Range(0, audJump.Length)], audJumpVol);
         }
     }
 
@@ -118,8 +133,6 @@ public class playerController : MonoBehaviour, IDamage, IOpen
     IEnumerator shoot()
     {
          isShooting = true;
-
-       
  
         RaycastHit hit;
          if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, shootDist, ~ignoreMask))
@@ -165,8 +178,8 @@ public class playerController : MonoBehaviour, IDamage, IOpen
         HP -= amount;
         updatePlayerUI();
         StartCoroutine(flashScreenDamage());
-
-        if(HP <= 0)
+        aud.PlayOneShot(audDamage[UnityEngine.Random.Range(0, audDamage.Length)], audDamageVol);
+        if (HP <= 0)
         {
             //Hey I'm dead!
             GameManager.instance.youLose();
@@ -215,5 +228,19 @@ public class playerController : MonoBehaviour, IDamage, IOpen
 
         gunModel.GetComponent<MeshFilter>().sharedMesh = gun.model.GetComponent<MeshFilter>().sharedMesh;
         gunModel.GetComponent<MeshRenderer>().sharedMaterial = gun.model.GetComponent<MeshRenderer>().sharedMaterial;
+    }
+    IEnumerator playStep()
+    {
+        isPlayingStep = true;
+        aud.PlayOneShot(audSteps[UnityEngine.Random.Range(0, audSteps.Length)], audStepsVol);
+        if (!isSprinting)
+        {
+            yield return new WaitForSeconds(0.5f);
+        }
+        else
+        {
+            yield return new WaitForSeconds(0.3f);
+        }
+        isPlayingStep = false;
     }
 }

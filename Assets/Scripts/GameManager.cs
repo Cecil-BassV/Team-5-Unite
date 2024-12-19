@@ -7,6 +7,7 @@ using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
+    public AudioSource aud;
 
     [SerializeField] GameObject menuActive;
     [SerializeField] GameObject menuPause;
